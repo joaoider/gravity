@@ -16,7 +16,7 @@ from analise_seofernandes_likes_comentarios import analisar_seofernandes_likes_c
 texto_comments, tabela_comments = analisar_comentarios()
 texto_followers, tabela_followers = analisar_followers()
 texto_followings, tabela1_followings, tabela2_followings, tabela3_followings = analisar_following()
-texto_likes_comments, tabela_likes_comments = analisar_likes_comments()
+texto_likes_comments, tabela_likes_comments, likes_amostra, comments_amostra = analisar_likes_comments()
 texto_likes, tabela_likes = analisar_likes()
 texto_seofernandes, tabela_seofernandes = analisar_seofernandes_likes_comentarios()
 
@@ -82,8 +82,18 @@ with col2:
     elif selecao == "likes_comments":
         st.subheader("Análise de Likes & Comments")
         st.text_area("Resumo da análise de interseção", texto_likes_comments, height=150)
+
         if tabela_likes_comments is not None and not tabela_likes_comments.empty:
+            st.write("Usernames que aparecem tanto em likes quanto em comments:")
             st.dataframe(tabela_likes_comments)
+
+        if likes_amostra is not None and not likes_amostra.empty:
+            st.write("Usernames de likes presentes na amostra:")
+            st.dataframe(likes_amostra)
+
+        if comments_amostra is not None and not comments_amostra.empty:
+            st.write("Usernames de comments presentes na amostra:")
+            st.dataframe(comments_amostra)
 
     elif selecao == "likes":
         st.subheader("Análise de Likes")

@@ -39,7 +39,7 @@ def analisar_following():
     # Calcular coluna de taxa
     resultado['aparicoes_por_seguidor'] = (resultado['aparicoes'] / resultado['seguidores']) * 100000
     # Ordenar
-    resultado_ordenado = resultado.sort_values(by='aparicoes_por_seguidor', ascending=False)
+    resultado_ordenado = resultado.sort_values(by='aparicoes', ascending=False)
 
     # Verificar quais logins estão entre os top usernames
     nomes_top = top_usernames.index
