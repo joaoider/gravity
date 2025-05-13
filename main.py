@@ -15,7 +15,7 @@ from analise_seofernandes_likes_comentarios import analisar_seofernandes_likes_c
 # Pré-carregar as análises (cache garante que não serão reprocessadas)
 texto_comments, tabela_comments = analisar_comentarios()
 texto_followers, tabela_followers = analisar_followers()
-texto_followings, tabela1_followings, tabela2_followings, tabela3_followings = analisar_following()
+texto_followings, tabela1_followings, tabela2_followings, tabela3_followings, tabela4_followings = analisar_following()
 texto_likes_comments, tabela_likes_comments, likes_amostra, comments_amostra = analisar_likes_comments()
 texto_likes, tabela_likes = analisar_likes()
 texto_seofernandes, tabela_seofernandes = analisar_seofernandes_likes_comentarios()
@@ -70,6 +70,10 @@ with col2:
         if tabela3_followings is not None and not tabela3_followings.empty:
             st.write("Nomes em comum entre 'source' e 'username':")
             st.dataframe(tabela3_followings)
+
+        if tabela4_followings is not None and not tabela4_followings.empty:
+            st.write("Top usernames que também estão na base (coluna login):")
+            st.dataframe(tabela4_followings)
 
     elif selecao == "likes":
         st.subheader("Análise de Likes")

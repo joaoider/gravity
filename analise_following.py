@@ -41,6 +41,10 @@ def analisar_following():
     # Ordenar
     resultado_ordenado = resultado.sort_values(by='aparicoes', ascending=False)
 
+    # Verificar quais top_usernames estão na coluna login do df base
+    usernames_na_base = resultado.index.intersection(df['login'])
+    top_usernames_na_base = resultado.loc[usernames_na_base].sort_values(by='aparicoes', ascending=False)
+
     # Verificar quais logins estão entre os top usernames
     nomes_top = top_usernames.index
     logins_encontrados = df[df['login'].isin(nomes_top)][['login']].drop_duplicates()
@@ -52,4 +56,5 @@ def analisar_following():
     nomes_comuns_df = pd.DataFrame(sorted(nomes_em_ambas), columns=["nomes_em_ambas"])
     resultados.append(f"Nomes em comum entre 'source' e 'username': {len(nomes_em_ambas)}")
 
-    return '\n'.join(resultados), resultado_ordenado, logins_encontrados, nomes_comuns_df
+    return '\n'.join(resultados), resultado_ordenado, logins_encontrados, nomes_comuns_df, top_usernames_na_base
+
