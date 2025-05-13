@@ -44,13 +44,13 @@ def analisar_following():
     resultado_ordenado['rank'] = range(1, len(resultado_ordenado) + 1)
 
     # Verificar quais top_usernames estão na coluna login do df base
-    usernames_na_base = resultado.index.intersection(df['login'])
-    top_usernames_na_base = resultado.loc[usernames_na_base].sort_values(by='aparicoes', ascending=False)
-
-    # Verificar quais top_usernames estão na coluna login do df base
     usernames_na_base = resultado_ordenado.index.intersection(df['login'])
     top_usernames_na_base = resultado_ordenado.loc[usernames_na_base].sort_values(by='rank')
 
+
+    # Verificar quais logins estão entre os top usernames
+    nomes_top = top_usernames.index
+    logins_encontrados = df[df['login'].isin(nomes_top)][['login']].drop_duplicates()
 
     # Nomes em comum entre source e username
     sources = set(df_final['source'].dropna().unique())
