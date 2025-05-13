@@ -1,31 +1,25 @@
 import pandas as pd
+import streamlit as st
+@st.cache_data
+def analisar_seofernandes_likes_comentarios():
+    caminho_arquivo = 'curtidas_comentarios_seo/flavio_50k_seofernandes_dados_completos.csv'
+    df = pd.read_csv(caminho_arquivo, sep=';')
 
-caminho_arquivo = 'curtidas_comentarios_seo/flavio_50k_seofernandes_dados_completos.csv'
-df = pd.read_csv(caminho_arquivo, sep=';')
-print('dataframe')
-print(df)
+    resultados = []
+    resultados.append(f"Tamanho da base: {len(df)}")
+    resultados.append(f"Quantidade de usernames únicos: {df['username'].nunique()}")
+    resultados.append(f"Média de seguidores: {df['seguidores'].mean():,.2f}")
+    resultados.append(f"Média de seguindo: {df['seguindo'].mean():,.2f}")
+    resultados.append(f"Média de posts: {df['posts'].mean():,.2f}")
 
-print('tamanho da base')
-print(len(df))
+    caminho_arquivo2 = 'base/Base_Seofernandes.csv'
+    df2 = pd.read_csv(caminho_arquivo2, sep=';')
 
-num_unicos = df['username'].nunique()
-print(f"Quantidade de nomes únicos na coluna 'username': {num_unicos}")
+    # Verificar quais usernames estão também na coluna login
+    usernames_em_ambos = df[df['username'].isin(df2['login'])]
+    resultados.append(f"Usernames que também estão na coluna 'login' da base principal: {len(usernames_em_ambos)}")
 
-print('média de seguidores: ', df['seguidores'].mean())
-print('seguindo, em média: ', df['seguindo'].mean())
-print('média de posts: ', df['posts'].mean())
+    # Tabela com os dados encontrados
+    tabela = usernames_em_ambos[['username', 'seguidores', 'seguindo']].drop_duplicates()
 
-caminho_arquivo2 = 'base/Base_Seofernandes.csv'
-df2 = pd.read_csv(caminho_arquivo2, sep=';')
-print('dataframe2')
-print(df2)
-
-
-print('________________________________________________________________________________________________')
-# Verificar quais usernames estão também na coluna login
-usernames_em_ambos = df[df['username'].isin(df2['login'])]
-# Exibir quantidade de correspondências e os nomes únicos encontrados
-print(f"Quantidade de usernames que também estão na coluna 'login': {len(usernames_em_ambos)}")
-#print(f"Nomes únicos em comum: {usernames_em_ambos['username'].nunique()}")
-#print("Usernames em comum:")
-#print(usernames_em_ambos['username'].unique())
+    return '\n'.join(resultados), tabela

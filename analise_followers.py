@@ -1,45 +1,38 @@
 import pandas as pd
-import glob
 import os
+import glob
+import streamlit as st
+@st.cache_data
+def analisar_followers():
+    pasta = r'C:\Users\joao.silva\Documents\GitHub\gravity\Resultados\Arquivos Individuais - Followers'
+    arquivos_csv = glob.glob(os.path.join(pasta, "*.csv"))
+    lista_dfs = []
 
-pasta = r'C:\Users\joao.silva\Documents\GitHub\gravity\scrapegram\seofernandes\Resultados\Arquivos Individuais - Followers'
-arquivos_csv = glob.glob(os.path.join(pasta, "*.csv"))
-lista_dfs = []
+    for arquivo in arquivos_csv:
+        try:
+            df_temp = pd.read_csv(arquivo, sep=';', on_bad_lines='skip')
+            lista_dfs.append(df_temp)
+        except pd.errors.ParserError as e:
+            continue
 
-for arquivo in arquivos_csv:
-    try:
-        df_temp = pd.read_csv(arquivo, sep=';', on_bad_lines='skip')  # ajuste o sep se necessário
-        lista_dfs.append(df_temp)
-    except pd.errors.ParserError as e:
-        print(f"Erro no arquivo {arquivo}: {e}")
+    if not lista_dfs:
+        return "Nenhum arquivo CSV válido encontrado.", None
 
-if lista_dfs:
     df_final = pd.concat(lista_dfs, ignore_index=True)
-    print(df_final.head())
-else:
-    print("Nenhum arquivo CSV válido encontrado.")
 
-print('tamanho base')
-print(len(df_final))
+    resultados = []
+    resultados.append(f"Tamanho da base: {len(df_final)}")
+    resultados.append(f"Média de seguidores: {df_final['seguidores'].mean():,.2f}")
+    resultados.append(f"Média de seguindo: {df_final['seguindo'].mean():,.2f}")
 
-print('média de seguidores')
-print(df_final['seguidores'].mean())
+    # Conjuntos únicos de valores
+    sources = set(df_final['source'].dropna().unique())
+    usernames = set(df_final['username'].dropna().unique())
+    nomes_em_ambas = sources.intersection(usernames)
 
-print('seguindo, em média')
-print(df_final['seguindo'].mean())
+    resultados.append(f"Nomes em comum entre 'source' e 'username': {len(nomes_em_ambas)}")
 
-#print(df_final.loc[df_final['username']=='seofernandes'])
+    # Tabela com os nomes (convertendo set para DataFrame)
+    tabela = pd.DataFrame(sorted(nomes_em_ambas), columns=["nomes_em_ambas"])
 
-#print(df_final['username'].value_counts().head(10))
-
-# Conjuntos únicos de valores
-sources = set(df_final['source'].dropna().unique())
-usernames = set(df_final['username'].dropna().unique())
-
-# Interseção entre os dois conjuntos
-nomes_em_ambas = sources.intersection(usernames)
-
-# Exibir resultado
-print(f"Quantidade de nomes que aparecem tanto em 'source' quanto em 'username': {len(nomes_em_ambas)}")
-print("Nomes que aparecem em ambas as colunas:")
-print(nomes_em_ambas)
+    return '\n'.join(resultados), tabela

@@ -65,8 +65,16 @@ def analisar_csv(caminho_arquivo, salvar_em_txt=False, caminho_saida_txt='analis
     # Exibir no console
     print(texto_final)
     
+    # Juntar todos os resultados
+    texto_final = '\n'.join(map(str, resultados))
+
+    # Exibir no console (opcional)
+    print(texto_final)
+
     # Se quiser salvar
     if salvar_em_txt:
         with open(caminho_saida_txt, 'w', encoding='utf-8') as f:
             f.write(texto_final)
         print(f'\nResultados salvos em: {os.path.abspath(caminho_saida_txt)}')
+
+    return texto_final  # <--- Adicionado

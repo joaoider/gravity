@@ -1,58 +1,38 @@
 import pandas as pd
-import glob
 import os
+import glob
+import streamlit as st
+@st.cache_data
+def analisar_comentarios():
+    caminho_arquivo = 'base/Base_Seofernandes.csv'
+    df = pd.read_csv(caminho_arquivo, sep=';')
 
-caminho_arquivo = 'base/Base_Seofernandes.csv'
-df = pd.read_csv(caminho_arquivo, sep=';')
-print('dataframe')
-print(df)
+    pasta = r'C:\Users\joao.silva\Documents\GitHub\gravity\Resultados\Arquivos Individuais - Comments'
+    arquivos_csv = glob.glob(os.path.join(pasta, "*.csv"))
+    lista_dfs = []
 
-pasta = r'C:\Users\joao.silva\Documents\GitHub\gravity\scrapegram\seofernandes\Resultados\Arquivos Individuais - Comments'
-arquivos_csv = glob.glob(os.path.join(pasta, "*.csv"))
-lista_dfs = []
+    for arquivo in arquivos_csv:
+        try:
+            df_temp = pd.read_csv(arquivo, sep=';', on_bad_lines='skip')
+            lista_dfs.append(df_temp)
+        except pd.errors.ParserError as e:
+            continue
 
-for arquivo in arquivos_csv:
-    try:
-        df_temp = pd.read_csv(arquivo, sep=';', on_bad_lines='skip')  # ajuste o sep se necessário
-        lista_dfs.append(df_temp)
-    except pd.errors.ParserError as e:
-        print(f"Erro no arquivo {arquivo}: {e}")
+    if not lista_dfs:
+        return "Nenhum arquivo CSV válido encontrado.", None
 
-if lista_dfs:
     df_final = pd.concat(lista_dfs, ignore_index=True)
-    print(df_final.head())
-else:
-    print("Nenhum arquivo CSV válido encontrado.")
 
-print('média de seguidores')
-print(df_final['seguidores'].mean())
+    resultados = []
 
-print('seguindo, em média')
-print(df_final['seguindo'].mean())
+    resultados.append(f"Média de seguidores: {df_final['seguidores'].mean():,.2f}")
+    resultados.append(f"Média de seguindo: {df_final['seguindo'].mean():,.2f}")
+    resultados.append(f"Tamanho total da base: {len(df_final)}")
+    resultados.append(f"Usuários únicos (username): {df_final['username'].nunique()}")
 
-#print(df_final.loc[df_final['username']=='seofernandes'])
+    usuarios_em_ambos = df_final[df_final['username'].isin(df['login'])]
+    resultados.append(f"Usernames que também estão na coluna login da base: {len(usuarios_em_ambos)}")
 
-print('__________________________________________________________________________________________________________________')
-print('tamanho base')
-print(len(df_final))
+    tabela = usuarios_em_ambos[['username', 'seguidores', 'seguindo']].drop_duplicates()
 
-print('____________________________________________________________________________________________________________')
-num_unicos = df_final['username'].nunique()
-print(f"Quantidade de nomes únicos na coluna 'username': {num_unicos}")
-
-
-print('_____________________________________________________________________________________________________')
-# Verifica quais usernames do df_final também estão na coluna login do df
-usuarios_em_ambos = df_final[df_final['username'].isin(df['login'])]
-# Exibe o total e os dados encontrados
-print(f"Quantidade de usernames que também estão na coluna login: {len(usuarios_em_ambos)}")
-print(usuarios_em_ambos[['username', 'seguidores', 'seguindo']].drop_duplicates())
-
-
-
-
-print('__________________________________________________________________________________________')
-
-
-
-print('__________________________________________________________________________________________')
+    return '\n'.join(resultados), tabela
