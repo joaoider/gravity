@@ -33,29 +33,22 @@ selecao = None
 with col1:
     st.image("seofernandes.PNG", width=150, caption="Seo Fernandes")
     st.markdown("### Análises")
-    if st.button("Comments"):
-        selecao = "comments"
     if st.button("Followers"):
         selecao = "followers"
     if st.button("Followings"):
         selecao = "followings"
-    if st.button("Likes & Comments"):
-        selecao = "likes_comments"
     if st.button("Likes"):
         selecao = "likes"
+    if st.button("Comments"):
+        selecao = "comments"
+    if st.button("Likes & Comments"):
+        selecao = "likes_comments"
     if st.button("SeoFernandes - Likes & Comments"):
         selecao = "seofernandes"
 
 # Coluna 2: exibir resultado com base na seleção
 with col2:
-    if selecao == "comments":
-        st.subheader("Análise de Comments")
-        st.text_area("Resumo da análise", texto_comments, height=250)
-    
-        if tabela_comments is not None and not tabela_comments.empty:
-            st.dataframe(tabela_comments)
-
-    elif selecao == "followers":
+    if selecao == "followers":
         st.subheader("Análise de Followers")
 
         st.text_area("Resumo da análise de followers", texto_followers, height=250)
@@ -78,6 +71,18 @@ with col2:
             st.write("Nomes em comum entre 'source' e 'username':")
             st.dataframe(tabela3_followings)
 
+    elif selecao == "likes":
+        st.subheader("Análise de Likes")
+        st.text_area("Resumo da análise de likes", texto_likes, height=250)
+        if tabela_likes is not None and not tabela_likes.empty:
+            st.dataframe(tabela_likes)
+
+    elif selecao == "comments":
+        st.subheader("Análise de Comments")
+        st.text_area("Resumo da análise", texto_comments, height=250)
+    
+        if tabela_comments is not None and not tabela_comments.empty:
+            st.dataframe(tabela_comments)
 
     elif selecao == "likes_comments":
         st.subheader("Análise de Likes & Comments")
@@ -95,11 +100,6 @@ with col2:
             st.write("Usernames de comments presentes na amostra:")
             st.dataframe(comments_amostra)
 
-    elif selecao == "likes":
-        st.subheader("Análise de Likes")
-        st.text_area("Resumo da análise de likes", texto_likes, height=250)
-        if tabela_likes is not None and not tabela_likes.empty:
-            st.dataframe(tabela_likes)
 
     elif selecao == "seofernandes":
         st.subheader("Seo Fernandes – Curtidas e Comentários")
